@@ -1,0 +1,37 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>QRCodeLoginDemo</title>
+<script src='http://cdn.staticfile.org/jquery/2.1.1/jquery.min.js'></script>
+<script src="http://cdn.staticfile.org/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
+<script>
+	$(document).ready(function(){
+		var interval;
+		$("button").click(function(){
+			$("div").empty();
+			$.get("http://123.57.72.138:5001/qrcodelogin/get_key", function(data){
+				$("div").qrcode("XinManJing_" + data);
+				if (interval) clearInterval(interval);
+				interval = setInterval(function(){
+					$.get("http://123.57.72.138:5001/qrcodelogin/check_login/" + data, function(data){
+						$("p").text(data);
+						if (data != "waiting"){
+							clearInterval(interval);
+							$("div").empty();
+							if (data != "timeout") {
+								alert("Welcome, " + data);
+							}
+						}
+					});
+				}, 1000);
+			});
+		});
+	});
+</script>
+</head>
+<body>
+<button>Login</button>
+<div></div>
+<p>please click 'Login' button to login.</p>
+</body>
+</html>
